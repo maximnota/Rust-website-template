@@ -1,0 +1,1 @@
+/Users/maximnota/Documents/Programming/Rust/net/decrypted/target/debug/decrypted: /Users/maximnota/Documents/Programming/Rust/net/decrypted/pages/index.html /Users/maximnota/Documents/Programming/Rust/net/decrypted/src/main.rs
