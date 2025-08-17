@@ -1,5 +1,5 @@
-use std::time::{Duration, Instant};
 use std::collections::HashMap;
+use std::time::{Duration, Instant};
 
 pub struct RateLimiter {
     requests: HashMap<String, Vec<Instant>>,
@@ -35,6 +35,13 @@ impl RateLimiter {
             RateLimitStatus::Allowed
         }
     }
+
+    pub fn allow_request(&mut self, ip: &str) -> bool {
+        match self.check_request(ip) {
+            RateLimitStatus::Banned => false,
+            RateLimitStatus::Warning | RateLimitStatus::Allowed => true,
+        }
+    }
 }
 
 pub enum RateLimitStatus {
@@ -42,4 +49,3 @@ pub enum RateLimitStatus {
     Warning,
     Banned,
 }
-
