@@ -1,5 +1,6 @@
 // lib.rs
 
+use std::env;
 use std::fs;
 use std::net::SocketAddr;
 use std::path::Path;
@@ -112,7 +113,16 @@ pub async fn run_server() {
 
     let static_files = warp::path("static").and(warp::fs::dir("static"));
 
-    let routes = index.or(dynamic_pages).or(pages).or(static_files);
+    // Health check endpoint for Railway
+    let health = warp::path("health")
+        .and(warp::get())
+        .map(|| warp::reply::with_status("OK", warp::http::StatusCode::OK));
+
+    let routes = health
+        .or(index)
+        .or(dynamic_pages)
+        .or(pages)
+        .or(static_files);
 
     let (shutdown_tx, shutdown_rx) = oneshot::channel::<()>();
 
@@ -128,8 +138,13 @@ pub async fn run_server() {
         let _ = shutdown_tx.send(());
     });
 
-    let addr = ([127, 0, 0, 1], 3030);
-    println!("Server running on http://127.0.0.1:3030");
+    let port: u16 = env::var("PORT")
+        .unwrap_or_else(|_| "3030".to_string())
+        .parse()
+        .expect("PORT must be a valid number");
+
+    let addr = ([0, 0, 0, 0], port);
+    println!("Server running on http://0.0.0.0:{}", port);
 
     let (_, server) = warp::serve(routes).bind_with_graceful_shutdown(addr, async {
         shutdown_rx.await.ok();
