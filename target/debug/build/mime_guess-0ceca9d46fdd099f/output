@@ -1,0 +1,1 @@
+cargo:rustc-env=MIME_TYPES_GENERATED_PATH=/Users/maximnota/Documents/Programming/Rust/net/decrypted/target/debug/build/mime_guess-0ceca9d46fdd099f/out/mime_types_generated.rs
